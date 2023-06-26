@@ -1,44 +1,49 @@
 import { galleryItems } from "./gallery-items.js";
 // Change code below this line
 
-// Генеруємо розмітку для кожного елемента галереї і додаємо її до списку
-const galleryList = document.querySelector(".gallery");
-galleryList.innerHTML = galleryItems
-  .map(
-    (item) => `
+const list = document.querySelector(".gallery");
+
+// Додаємо розмітку елементів галереї на основі масиву даних
+list.insertAdjacentHTML("beforeend", createMarkupItems(galleryItems));
+list.addEventListener("click", openModal);
+list.addEventListener("keydown", handleKeyPress);
+
+// Функція для створення розмітки елементів галереї
+function createMarkupItems(arr) {
+  return arr
+    .map(
+      ({ preview, original, description }) => `
       <li class="gallery__item">
-        <a class="gallery__link" href="${item.original}">
+        <a class="gallery__link" href="${original}">
           <img
             class="gallery__image"
-            src="${item.preview}"
-            alt="${item.description}"
-            data-source="${item.original}"
+            src="${preview}"
+            alt="${description}"
+            data-source="${original}"
           />
         </a>
-      </li>
-    `
-  )
-  .join("");
-
-// Додаємо обробники подій кліку та натискання на клавішу
-galleryList.addEventListener("click", openModal);
-document.addEventListener("keydown", handleKeyPress);
+      </li>`
+    )
+    .join("");
+}
 
 // Функція для відкриття модального вікна
 function openModal(event) {
   event.preventDefault();
   const imageUrl = event.target.dataset.source;
   if (imageUrl) {
+    // Створюємо об'єкт модального вікна та відображаємо його
     modal = basicLightbox.create(`<img src="${imageUrl}">`);
     modal.show();
   }
 }
 
-let modal; // Змінна для збереження модального об'єкту
+let modal; // Змінна для збереження об'єкту модального вікна
 
-// Функція для обробки натискання на клавішу та закриття модалки
+// Функція для обробки натискання клавіші та закриття модального вікна
 function handleKeyPress(event) {
   if (event.code === "Escape" && modal) {
+    // Закриваємо модальне вікно, якщо воно відкрите
     modal.close();
   }
 }
